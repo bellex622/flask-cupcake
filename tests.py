@@ -27,6 +27,13 @@ CUPCAKE_DATA_2 = {
     "image_url": "http://test.com/cupcake2.jpg"
 }
 
+CUPCAKE_PATCH_DATA = {
+    "flavor": "Updated Flavor",
+    "size": "Updated Size",
+    "rating": 100,
+    "image_url": "Updated url"
+}
+
 
 class CupcakeViewsTestCase(TestCase):
     """Tests for views of API."""
@@ -105,3 +112,23 @@ class CupcakeViewsTestCase(TestCase):
             })
 
             self.assertEqual(Cupcake.query.count(), 2)
+
+    def test_patch_cupcake(self):
+        with app.test_client() as client:
+            url = f"/api/cupcakes/{self.cupcake_id}"
+            resp = client.patch(url, json=CUPCAKE_PATCH_DATA)
+            self.assertEqual(resp.status_code, 200)
+
+
+            self.assertEqual(
+                resp.json,
+                {
+                    "id":self.cupcake_id,
+                    "flavor": "Updated Flavor",
+                    "size": "Updated Size",
+                    "rating": 100,
+                    "image_url": "Updated url"
+                }
+            )
+
+    def test_delete_cupcake(self):
