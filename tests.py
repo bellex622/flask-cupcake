@@ -122,13 +122,28 @@ class CupcakeViewsTestCase(TestCase):
 
             self.assertEqual(
                 resp.json,
-                {
+                {"cupcake":
+                    {
                     "id":self.cupcake_id,
                     "flavor": "Updated Flavor",
                     "size": "Updated Size",
                     "rating": 100,
                     "image_url": "Updated url"
+                    }
                 }
             )
 
     def test_delete_cupcake(self):
+        with app.test_client() as client:
+            self.assertEqual(Cupcake.query.count(),1)
+            url = f"/api/cupcakes/{self.cupcake_id}"
+            resp = client.delete(url)
+
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(Cupcake.query.count(),0)
+            self.assertEqual(resp.json, {"deleted": self.cupcake_id})
+
+
+
+
+
